@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ИИ-детектив — лаборатория рациональных чисел · версия 2.2</title>
+<style>
+:root{--navy:#17365d;--blue:#2563eb;--sky:#eaf2ff;--teal:#0f766e;--gold:#f4b942;--ink:#172033;--muted:#5d687b;--paper:#f5f7fb;--white:#fff;--green:#167647;--red:#b42318;--line:#dbe2ec}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);font-family:Arial,Helvetica,sans-serif;color:var(--ink);line-height:1.5}
+header{background:linear-gradient(125deg,#17365d,#2456a6);color:white;padding:28px 18px 32px}
+.wrap{max-width:1050px;margin:auto;padding:0 18px}
+.kicker{font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:#d8e7ff;font-weight:bold}
+h1{font-size:clamp(1.8rem,4vw,3rem);line-height:1.1;margin:10px 0}
+header p{max-width:740px;margin:12px 0 0;color:#edf4ff}
+.pills{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}.pill{border:1px solid #ffffff66;border-radius:999px;padding:5px 11px;font-size:.86rem}
+main{padding:24px 0 40px}.intro{background:white;border:1px solid var(--line);border-radius:16px;padding:18px 20px;margin-bottom:18px;box-shadow:0 5px 20px #17365d0b}
+.story{background:linear-gradient(120deg,#fff8e5,#fff);border:1px solid #f1d48a;border-radius:16px;padding:18px 20px;margin-bottom:18px}.story-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:14px;align-items:center}.case-number{display:inline-block;background:#17365d;color:white;border-radius:999px;padding:5px 12px;font-size:.82rem;font-weight:bold}.progress-track{height:10px;background:#e5eaf2;border-radius:99px;overflow:hidden;margin:8px 0}.progress-fill{height:100%;width:0;background:linear-gradient(90deg,#0f766e,#38bdf8);transition:width .25s}.code-slots{display:flex;gap:7px;margin-top:8px}.code-slot{width:34px;height:40px;border:2px dashed #9aa9bd;border-radius:8px;display:grid;place-items:center;font-weight:bold;font-size:1.15rem;background:white}.code-slot.filled{border-style:solid;border-color:#0f766e;color:#0f766e;background:#e7f8f2}.visual-box{background:#f3f7ff;border:1px solid #d5e2fa;border-radius:12px;padding:14px;margin:12px 0}.number-line{position:relative;height:58px;margin:12px 8px 0}.number-line .axis{position:absolute;left:2%;right:2%;top:28px;height:3px;background:#9ba9bd}.number-line .zero{position:absolute;left:50%;top:19px;width:3px;height:20px;background:#17365d}.number-line .point{position:absolute;top:18px;width:14px;height:14px;border-radius:50%;background:#2563eb;border:3px solid white;box-shadow:0 0 0 2px #2563eb;transform:translateX(-50%)}.number-line .point.neg{background:#d94841;box-shadow:0 0 0 2px #d94841}.number-line .label{position:absolute;top:38px;transform:translateX(-50%);font-size:.8rem;font-weight:bold}.fraction-bar{display:flex;gap:4px;max-width:280px;margin:10px auto}.fraction-bar span{height:24px;flex:1;border:1px solid #8da6ce;border-radius:4px;background:white}.fraction-bar span.filled{background:#4f7ee8;border-color:#4f7ee8}.fraction-bar span.second{background:#0f766e;border-color:#0f766e}.badge-row{display:flex;gap:8px;flex-wrap:wrap}.mini-badge{border-radius:999px;padding:5px 10px;background:#e8eef8;color:#17365d;font-size:.84rem;font-weight:bold}h2{font-size:1.35rem;margin:0 0 12px;color:var(--navy)}h3{font-size:1.08rem;margin:0 0 8px}
+.missions{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:18px 0}
+.mission{border:1px solid var(--line);background:white;border-radius:13px;padding:14px;text-align:left;cursor:pointer;color:var(--ink);font:inherit;transition:.15s}
+.mission:hover,.mission.active{border-color:var(--blue);box-shadow:0 0 0 2px #2563eb18;background:#f5f8ff}
+.mission strong{display:block;color:var(--navy);margin:4px 0}.mission span{font-size:.88rem;color:var(--muted)}
+.panel{background:white;border:1px solid var(--line);border-radius:16px;padding:22px;margin:14px 0;box-shadow:0 5px 20px #17365d08}
+.problem{font-size:clamp(1.7rem,4vw,2.4rem);font-weight:bold;color:var(--navy);text-align:center;background:var(--sky);border-radius:12px;padding:20px;margin:14px 0}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}input[type=text]{font:inherit;border:1px solid #b7c3d5;border-radius:10px;padding:12px;min-width:170px;flex:1}
+button.action{font:inherit;font-weight:bold;border:0;border-radius:10px;padding:12px 16px;background:var(--blue);color:white;cursor:pointer}
+button.secondary{background:#e8eef8;color:var(--navy)}button.action:focus,input:focus{outline:3px solid #93c5fd;outline-offset:2px}
+.feedback{margin-top:14px;border-radius:10px;padding:13px 15px;background:#f1f5f9;border:1px solid var(--line)}
+.feedback.good{background:#e9f8ef;border-color:#a8dfba}.feedback.try{background:#fff5e5;border-color:#f5d28b}
+.small{font-size:.9rem;color:var(--muted)}.rule{border-left:4px solid var(--gold);padding:10px 14px;background:#fff9e9;border-radius:0 9px 9px 0;margin:12px 0}
+.steps{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}.step{background:#f3f6fb;border-radius:10px;padding:12px;font-size:.9rem}.step b{display:block;color:var(--blue);margin-bottom:5px}
+.prompt{white-space:pre-wrap;background:#f6f8fc;border:1px dashed #a9b8ce;border-radius:10px;padding:14px;font-size:.95rem}
+footer{background:#e9eef6;padding:18px;color:var(--muted);font-size:.85rem}
+@media(max-width:760px){.missions{grid-template-columns:repeat(2,minmax(0,1fr))}.steps{grid-template-columns:1fr 1fr}}
+@media(max-width:430px){.missions{grid-template-columns:1fr}.panel{padding:16px}.story-grid{grid-template-columns:1fr}}
+
+/* Полноценное оформление: ярко-синяя шапка и геометрический казахский орнамент */
+:root{--navy:#073b91;--blue:#075de8;--sky:#eaf3ff;--gold:#ffd34f;--ink:#172033;--muted:#586783;--paper:#f2f7ff;--line:#c9d9f3}
+body{background:linear-gradient(180deg,#eaf2ff 0,#f7faff 360px,var(--paper) 100%)}
+header{position:relative;isolation:isolate;overflow:hidden;background:linear-gradient(120deg,#0647b8 0%,#0878f9 48%,#063c9b 100%);padding:0 18px 30px;border-bottom:7px solid #ffd34f;box-shadow:0 8px 24px #063b9133}
+header:before,header:after{content:"";display:block;height:22px;margin:0 -18px 18px;background-color:#063b91;background-image:linear-gradient(45deg,transparent 38%,#ffd34f 39%,#ffd34f 46%,transparent 47%),linear-gradient(-45deg,transparent 38%,#ffd34f 39%,#ffd34f 46%,transparent 47%),linear-gradient(135deg,transparent 38%,#fff0a8 39%,#fff0a8 46%,transparent 47%),linear-gradient(-135deg,transparent 38%,#fff0a8 39%,#fff0a8 46%,transparent 47%);background-size:30px 22px;background-position:0 0,0 0,15px 0,15px 0;background-repeat:repeat-x;border-bottom:2px solid #ffd34f}
+header:after{height:12px;margin:22px -18px -30px;border-top:2px solid #ffd34f;border-bottom:0;background-size:24px 12px}
+header .wrap{position:relative;z-index:1}.kicker{display:inline-block;background:#063b91;border:1px solid #ffe18a;color:#fff1b7;padding:7px 13px;border-radius:4px;letter-spacing:.08em}
+h1{color:#fff;text-shadow:0 3px 0 #063b91,0 5px 15px #00255d55;max-width:900px}
+header p{color:#fff;max-width:820px;font-size:1.06rem} .pill{border:1px solid #ffdf75;background:#0647b8aa;color:white;border-radius:5px;font-weight:700}
+.intro,.panel{border:1px solid #c7d9f7;box-shadow:0 8px 24px #164b9410}.story{background:linear-gradient(120deg,#fff9e8,#fff);border:2px solid #e8c45a;box-shadow:0 8px 24px #164b9410}
+.case-number{background:#075de8;border:2px solid #ffd34f;border-radius:5px}.visual-box{background:#edf5ff;border:2px solid #aac8ff}
+.progress-track{background:#d5e4fb;border:1px solid #b2c9ee}.progress-fill{background:linear-gradient(90deg,#075de8,#ffd34f)}
+.code-slot{width:40px;height:46px;border:2px dashed #d5a91a;border-radius:5px;background:#fffdf5;color:#073b91;font-size:1.25rem;box-shadow:inset 0 0 0 2px #fff4c9}.code-slot.filled{background:#fff0a8;border-color:#075de8;color:#073b91}
+h2{color:#073b91}.mission{border:1px solid #c4d7f5;border-bottom:4px solid #c4d7f5;border-radius:8px;box-shadow:0 4px 12px #073b9110}.mission:hover,.mission.active{border-color:#075de8;border-bottom-color:#ffd34f;background:#eaf3ff;box-shadow:0 5px 16px #075de822}.mission strong{color:#073b91}
+button.action{background:linear-gradient(135deg,#0878f9,#0647b8);box-shadow:0 3px 0 #063b91;border-radius:7px}button.secondary{background:#e5efff;color:#073b91;box-shadow:none;border:1px solid #aac8ff}
+.problem{background:linear-gradient(135deg,#eaf3ff,#fff);border:2px solid #c4d9ff;border-radius:10px;color:#073b91}
+footer{background:#063b91;color:#e8f1ff;border-top:5px solid #ffd34f}
+@media(max-width:600px){header{padding-bottom:28px}header:before{height:17px;background-size:24px 17px}header:after{margin-top:18px}}
+
+</style>
+</head>
+<body>
+<header>
+ <div class="wrap">
+  <div class="kicker">АВТОРСКИЙ ЦИФРОВОЙ РЕСУРС · 6 КЛАСС</div>
+  <h1>ИИ-ДЕТЕКТИВ<br>ЛАБОРАТОРИЯ РАЦИОНАЛЬНЫХ ЧИСЕЛ</h1>
+  <p><strong>РАССЛЕДОВАНИЕ: ПОИСК, ОБЪЯСНЕНИЕ, РЕШЕНИЕ + ИИ</strong><br>Учись вычислять, находить ошибки и объяснять свои решения. Искусственный интеллект — помощник в рассуждении, а не замена самостоятельной работе.</p>
+  <div class="pills"><span class="pill">Сложение</span><span class="pill">Вычитание</span><span class="pill">Умножение</span><span class="pill">Деление</span><span class="pill">Обыкновенные дроби</span><span class="pill">Десятичные числа</span><span class="pill">Детектив ошибок</span></div>
+ </div>
+</header>
+<main class="wrap">
+ <section class="story">
+  <div class="story-grid">
+   <div><span class="case-number">ДЕЛО № 06–R</span><h2 style="margin-top:10px">Тайна исчезнувшего математического кода</h2>
+    <p>В цифровом архиве пропал код доступа. Чтобы восстановить его, пройди шесть станций: четыре арифметических действия, обыкновенные дроби и десятичные числа. На каждой станции нужно решить задание и получить одну цифру.</p>
+    <div class="rule"><b>Правило детектива:</b> сначала подумай сам → проверь вычисление → объясни правило.</div>
+   </div>
+   <div class="visual-box"><b>Паспорт расследования</b><p class="small">Пройдено станций: <strong id="progressText">0 из 6</strong></p><div class="progress-track"><div id="progressFill" class="progress-fill"></div></div><p class="small">Секретный код:</p><div class="code-slots" id="codeSlots"><span class="code-slot">?</span><span class="code-slot">?</span><span class="code-slot">?</span><span class="code-slot">?</span><span class="code-slot">?</span><span class="code-slot">?</span></div><p id="caseStatus" class="small" aria-live="polite">Начни с любой станции. Каждая решённая миссия открывает цифру.</p></div>
+  </div>
+ </section>
+ <div class="missions" role="group" aria-label="Выбор математической миссии">
+  <button class="mission active" data-kind="add"><span>МИССИЯ 01</span><strong>➕ Сложение</strong><span>Разгадай знаки</span></button>
+  <button class="mission" data-kind="sub"><span>МИССИЯ 02</span><strong>➖ Вычитание</strong><span>Найди противоположное</span></button>
+  <button class="mission" data-kind="mul"><span>МИССИЯ 03</span><strong>✖ Умножение</strong><span>Проверь правило знаков</span></button>
+  <button class="mission" data-kind="div"><span>МИССИЯ 04</span><strong>➗ Деление</strong><span>Раздели модули</span></button>
+  <button class="mission" data-kind="frac"><span>МИССИЯ 05</span><strong>½ Дроби</strong><span>Найди общий знаменатель</span></button>
+  <button class="mission" data-kind="dec"><span>МИССИЯ 06</span><strong>0,5 Десятичные</strong><span>Вычисли точно</span></button>
+ </div>
+ <section class="panel">
+  <h2 id="missionTitle">Миссия 1. Сложение рациональных чисел</h2>
+  <p class="small" id="missionTip">Подумай: знаки чисел одинаковые или разные?</p>
+  <div class="problem" id="problem">−7 + 12 = ?</div>
+  <form id="answerForm">
+   <div class="row">
+    <label for="answer"><b>Твой ответ:</b></label>
+    <input id="answer" type="text" inputmode="decimal" autocomplete="off" placeholder="Например, 5" aria-label="Введи ответ">
+    <button class="action" type="submit">Проверить</button>
+    <button class="action secondary" type="button" id="newTask">Другой пример</button>
+   </div>
+  </form>
+  <div id="feedback" class="feedback" aria-live="polite">Введи ответ и нажми «Проверить».</div>
+  <p class="small">Введи целое число, десятичную дробь с запятой/точкой или обыкновенную дробь, например 3/4. Для отрицательных чисел используй знак минус.</p>
+  <div class="visual-box"><h3>Визуальная подсказка</h3><p class="small" id="visualText">Числовая прямая помогает увидеть направление движения от нуля.</p><div id="visualContent"><div class="number-line"><div class="axis"></div><div class="zero"></div><span class="point neg" style="left:32%"></span><span class="label" style="left:32%">−7</span><span class="point" style="left:76%"></span><span class="label" style="left:76%">+12</span></div></div></div>
+ </section>
+ <section class="panel">
+  <h2>Как работает учебный маршрут</h2>
+  <div class="steps">
+   <div class="step"><b>1. Попробуй</b>Реши пример без подсказки.</div>
+   <div class="step"><b>2. Проверь</b>Сверь результат.</div>
+   <div class="step"><b>3. Разберись</b>Найди, какое правило нужно применить.</div>
+   <div class="step"><b>4. Объясни</b>Расскажи ход решения своими словами.</div>
+   <div class="step"><b>5. Перенеси</b>Реши похожий пример самостоятельно.</div>
+  </div>
+ </section>
+ <section class="panel">
+  <h2>ИИ-помощник: инструкция для учебного диалога</h2>
+  <p>Скопируй инструкцию в доступный тебе ИИ-сервис. Вставь свой пример и собственную попытку решения. Не вводи личные данные.</p>
+  <div class="prompt" id="aiPrompt">Ты — доброжелательный помощник по математике для ученика 6 класса. Тема: арифметические действия с рациональными числами, обыкновенными и десятичными дробями.
+Сначала попроси меня решить пример самостоятельно. Если я ошибся, не сообщай ответ сразу: задай наводящий вопрос о знаках чисел, модулях или правиле действия. Объясняй простыми словами. Затем предложи похожий пример для самостоятельной проверки. Проверь математическую корректность своего объяснения.
+Мой пример и попытка: [вставь сюда].</div>
+  <div class="row" style="margin-top:10px"><button class="action" id="copyPrompt" type="button">Скопировать инструкцию</button><span id="copyStatus" class="small" aria-live="polite"></span></div>
+ </section>
+ <section class="panel">
+  <h2>Детектив ошибок</h2>
+  <p><b>Ученик записал:</b> (−5) · (−4) = −20</p>
+  <p>Найди ошибку. Какой знак должен быть у произведения двух отрицательных чисел?</p>
+  <div class="row">
+   <button class="action secondary detective" data-answer="wrong">Ответ: −20</button>
+   <button class="action secondary detective" data-answer="right">Ответ: 20</button>
+  </div>
+  <div id="detectiveFeedback" class="feedback" aria-live="polite">Выбери вариант и объясни, почему он верный.</div>
+ </section>
+ <section class="panel" id="reflectionPanel">
+  <h2>Рефлексия детектива</h2>
+  <p>Дело раскрыто? Оцени свою работу и выбери, что ты понял(а) после расследования.</p>
+  <form id="reflectionForm">
+   <fieldset style="border:1px solid var(--line);border-radius:12px;padding:14px;margin:12px 0">
+    <legend><b>1. Насколько уверенно ты теперь решаешь примеры?</b></legend>
+    <label style="display:block;margin:7px 0"><input type="radio" name="confidence" value="confident" required> Уверенно — могу объяснить правило.</label>
+    <label style="display:block;margin:7px 0"><input type="radio" name="confidence" value="practice"> В основном понимаю, но нужна практика.</label>
+    <label style="display:block;margin:7px 0"><input type="radio" name="confidence" value="help"> Мне ещё нужна помощь и объяснение.</label>
+   </fieldset>
+   <div style="margin:12px 0">
+    <label for="hardestStation"><b>2. Какая станция оказалась самой трудной?</b></label>
+    <select id="hardestStation" style="display:block;width:100%;max-width:520px;font:inherit;padding:11px;border:1px solid #b7c3d5;border-radius:10px;margin-top:7px">
+     <option value="">Выбери станцию (необязательно)</option>
+     <option>Сложение</option><option>Вычитание</option><option>Умножение</option><option>Деление</option><option>Обыкновенные дроби</option><option>Десятичные числа</option><option>Все задания были понятны</option>
+    </select>
+   </div>
+   <fieldset style="border:1px solid var(--line);border-radius:12px;padding:14px;margin:12px 0">
+    <legend><b>3. Что помогло тебе справиться?</b></legend>
+    <label style="display:block;margin:7px 0"><input type="checkbox" name="strategy" value="rules"> Вспоминал(а) правила и формулы.</label>
+    <label style="display:block;margin:7px 0"><input type="checkbox" name="strategy" value="hint"> Использовал(а) подсказки.</label>
+    <label style="display:block;margin:7px 0"><input type="checkbox" name="strategy" value="ai"> Обращался(ась) к ИИ за наводящим вопросом.</label>
+    <label style="display:block;margin:7px 0"><input type="checkbox" name="strategy" value="check"> Проверял(а) ответ и исправлял(а) ошибки.</label>
+   </fieldset>
+   <div style="margin:12px 0">
+    <label for="reflectionText"><b>4. Закончи фразу своими словами:</b></label>
+    <textarea id="reflectionText" rows="3" placeholder="Сегодня я понял(а)… / Мне нужно потренироваться…" style="display:block;width:100%;font:inherit;padding:11px;border:1px solid #b7c3d5;border-radius:10px;margin-top:7px"></textarea>
+   </div>
+   <button class="action" type="submit">Подвести итог</button>
+  </form>
+  <div id="reflectionFeedback" class="feedback" aria-live="polite" style="display:none"></div>
+  <p class="small">Помни: ИИ может ошибаться. Проверяй математические рассуждения и старайся объяснить решение самостоятельно.</p>
+ </section>
+</main>
+<footer><div class="wrap">Авторский интерактивный прототип · версия 2.1. Попроцкая Р.Р.</div></footer>
+<script>
+const tasks={
+ add:[
+  {q:"−7 + 12 = ?",a:5,h:"Знаки разные. Сравни модули: 12 больше 7. Вычти 7 из 12 и сохрани знак числа с большим модулем.",tip:"Знаки одинаковые или разные?"},
+  {q:"−9 + (−4) = ?",a:-13,h:"Оба числа отрицательные. Сложи модули 9 и 4, затем поставь знак минус.",tip:"Что делать с модулями, если оба числа отрицательные?"},
+  {q:"8 + (−11) = ?",a:-3,h:"Знаки разные. Вычти меньший модуль из большего: 11 − 8 = 3. Больший модуль у числа −11.",tip:"У какого числа модуль больше?"}
+ ],
+ sub:[
+  {q:"−4 − (−9) = ?",a:5,h:"Вычитание отрицательного числа замени сложением с противоположным: −4 + 9.",tip:"Как заменить вычитание отрицательного числа?"},
+  {q:"6 − 13 = ?",a:-7,h:"Представь: 6 + (−13). Модули разные; 13 − 6 = 7, знак — минус.",tip:"Запиши вычитание как сложение с противоположным числом."},
+  {q:"−8 − 5 = ?",a:-13,h:"−8 − 5 = −8 + (−5). Сложи модули и сохрани отрицательный знак.",tip:"Какой знак у обоих слагаемых после преобразования?"}
+ ],
+ mul:[
+  {q:"(−6) · (−3) = ?",a:18,h:"Перемножь модули: 6 · 3 = 18. У двух отрицательных множителей произведение положительное.",tip:"Какой знак у произведения чисел с одинаковыми знаками?"},
+  {q:"(−7) · 4 = ?",a:-28,h:"7 · 4 = 28. У множителей разные знаки, значит произведение отрицательное.",tip:"Сначала вычисли произведение модулей."},
+  {q:"(−5) · (−2) = ?",a:10,h:"Модули: 5 · 2 = 10. Одинаковые знаки дают положительное произведение.",tip:"Не забудь отдельно определить знак и модуль."}
+ ],
+ div:[
+  {q:"(−24) : 6 = ?",a:-4,h:"Раздели модули: 24 : 6 = 4. Знаки разные, значит результат отрицательный.",tip:"Раздели модули и отдельно определи знак."},
+  {q:"(−36) : (−9) = ?",a:4,h:"36 : 9 = 4. У делимого и делителя одинаковые знаки, результат положительный.",tip:"Каким будет знак частного при одинаковых знаках?"},
+  {q:"42 : (−7) = ?",a:-6,h:"42 : 7 = 6. Знаки разные, поэтому частное отрицательное.",tip:"Сначала вычисли 42 : 7."}
+ ],
+ frac:[
+  {q:"1/2 + 1/4 = ?",a:0.75,accept:["3/4","0.75"],h:"Приведи дроби к общему знаменателю: 1/2 = 2/4. Тогда 2/4 + 1/4 = 3/4.",tip:"Можно ли представить обе дроби в четвертях?",visual:"fraction"},
+  {q:"3/4 − 1/2 = ?",a:0.25,accept:["1/4","0.25"],h:"1/2 = 2/4, поэтому 3/4 − 2/4 = 1/4.",tip:"Сначала запиши дроби с одинаковым знаменателем.",visual:"fraction"},
+  {q:"(−1/3) + 2/3 = ?",a:1/3,accept:["1/3","0.3333333333","0.333333"],h:"Знаменатели одинаковые. Сложи числители: −1 + 2 = 1. Получаем 1/3.",tip:"При одинаковых знаменателях выполняй действие с числителями.",visual:"fraction"}
+ ],
+ dec:[
+  {q:"2,5 + (−1,2) = ?",a:1.3,h:"Знаки разные. Вычти модули: 2,5 − 1,2 = 1,3. Больший модуль у положительного числа.",tip:"Сравни модули 2,5 и 1,2.",visual:"decimal"},
+  {q:"−0,7 − 1,5 = ?",a:-2.2,h:"−0,7 − 1,5 = −0,7 + (−1,5). Сложи модули и сохрани минус: −2,2.",tip:"Представь вычитание как сложение отрицательных чисел.",visual:"decimal"},
+  {q:"(−1,2) · 0,5 = ?",a:-0.6,h:"1,2 · 0,5 = 0,6. Знаки разные, поэтому ответ отрицательный: −0,6.",tip:"Определи знак, затем вычисли 1,2 · 0,5.",visual:"decimal"}
+ ]
+};
+const names={add:"Сложение",sub:"Вычитание",mul:"Умножение",div:"Деление",frac:"Обыкновенные дроби",dec:"Десятичные числа"};
+const stationDigits={add:"4",sub:"2",mul:"6",div:"1",frac:"3",dec:"5"};
+const solved=new Set();
+let kind="add",index=0,attempts=0;
+const $=id=>document.getElementById(id);
+document.querySelectorAll(".mission").forEach(button=>{
+ button.addEventListener("click",()=>{
+  kind=button.dataset.kind;
+  index=0;
+  render();
+ });
+});
+function render(){
+ const t=tasks[kind][index];
+ const n={add:1,sub:2,mul:3,div:4,frac:5,dec:6}[kind];
+ $("missionTitle").textContent=`Станция ${n}. ${names[kind]}`;
+ $("missionTip").textContent=t.tip;$("problem").textContent=t.q;
+ $("answer").value="";$("feedback").className="feedback";$("feedback").textContent="Введи ответ и нажми «Проверить».";attempts=0;
+ document.querySelectorAll(".mission").forEach(b=>b.classList.toggle("active",b.dataset.kind===kind));
+ updateVisual(t);updateProgress();
+}
+function updateProgress(){
+ const count=solved.size;$("progressText").textContent=`${count} из 6`;
+ $("progressFill").style.width=(count/6*100)+"%";
+ const slots=$("codeSlots").children;
+ Object.keys(stationDigits).forEach((k,i)=>{slots[i].textContent=solved.has(k)?stationDigits[k]:"?";slots[i].classList.toggle("filled",solved.has(k));});
+ if(count===6){$("caseStatus").textContent="Код восстановлен: 426135. Дело раскрыто! Объясни, какие правила помогли пройти расследование.";}
+ else{$("caseStatus").textContent=`Открыто цифр: ${count}. Реши по одному заданию на каждой станции, чтобы восстановить код.`;}
+}
+function updateVisual(t){
+ const box=$("visualContent"),label=$("visualText");
+ if(t.visual==="fraction"){label.textContent="Модель дроби: каждый прямоугольник — одна равная часть целого.";box.innerHTML='<div class="fraction-bar"><span class="filled"></span><span class="filled"></span><span class="second"></span><span></span></div><p class="small" style="text-align:center">2/4 + 1/4 = 3/4</p>';}
+ else if(t.visual==="decimal"){label.textContent="Десятичные числа удобно сравнивать по разрядам: единицы, десятые, сотые.";box.innerHTML='<div class="badge-row"><span class="mini-badge">2,5 = 2 единицы и 5 десятых</span><span class="mini-badge">1,2 = 1 единица и 2 десятых</span></div><div class="number-line"><div class="axis"></div><div class="zero"></div><span class="point neg" style="left:38%"></span><span class="label" style="left:38%">−1,2</span><span class="point" style="left:72%"></span><span class="label" style="left:72%">+2,5</span></div>';}
+ else{label.textContent="Числовая прямая помогает увидеть направление движения от нуля.";box.innerHTML='<div class="number-line"><div class="axis"></div><div class="zero"></div><span class="point neg" style="left:32%"></span><span class="label" style="left:32%">−</span><span class="point" style="left:76%"></span><span class="label" style="left:76%">+</span></div>';}
+}
+function parseAnswer(raw){
+ const v=raw.trim().replace(/−/g,"-").replace(",",".");
+ if(/^[-+]?\d+\s*\/\s*\d+$/.test(v)){const parts=v.split("/").map(x=>Number(x.trim()));if(parts[1]===0)return NaN;return parts[0]/parts[1];}
+ return Number(v);
+}
+$("answerForm").addEventListener("submit",e=>{
+ e.preventDefault();const raw=$("answer").value.trim();
+ if(!raw){$("feedback").textContent="Сначала введи свой ответ.";return}
+ const val=parseAnswer(raw),t=tasks[kind][index];
+ const accepted=(t.accept||[]).map(x=>x.replace(",","."));
+ const normalized=raw.replace(/\s/g,"").replace(",",".");
+ const correct=Number.isFinite(val)&&Math.abs(val-t.a)<1e-6 || accepted.includes(normalized);
+ if(correct){
+  $("feedback").className="feedback good";$("feedback").innerHTML="<b>Верно! Станция пройдена.</b><br>"+t.h+"<br><br>Теперь объясни правило своими словами.";
+  if(!solved.has(kind)){solved.add(kind);updateProgress();}
+ }else{
+  attempts++;$("feedback").className="feedback try";
+  $("feedback").innerHTML="<b>Пока не получилось. Это возможность научиться.</b><br>"+(attempts===1?"Подсказка: "+t.tip:t.h)+"<br><br>Попробуй ещё раз, прежде чем переходить к следующему примеру.";
+ }
+});
+$("newTask").addEventListener("click",()=>{index=(index+1)%tasks[kind].length;render()});
+document.querySelectorAll(".detective").forEach(b=>b.addEventListener("click",()=>{
+ const box=$("detectiveFeedback");
+ if(b.dataset.answer==="right"){box.className="feedback good";box.innerHTML="<b>Верно: (−5) · (−4) = 20.</b><br>Ошибка была в знаке. Произведение двух отрицательных чисел положительно."}
+ else{box.className="feedback try";box.innerHTML="<b>Попробуй ещё раз.</b><br>Вспомни правило знаков: при умножении двух чисел с одинаковыми знаками результат положительный."}
+}));
+$("copyPrompt").addEventListener("click",async()=>{
+ const txt=$("aiPrompt").textContent;
+ try{await navigator.clipboard.writeText(txt);$("copyStatus").textContent="Инструкция скопирована."}
+ catch(e){$("copyStatus").textContent="Выдели текст инструкции и скопируй вручную."}
+});
+$("reflectionForm").addEventListener("submit",e=>{
+ e.preventDefault();
+ const confidence=document.querySelector('input[name="confidence"]:checked');
+ if(!confidence)return;
+ const station=$("hardestStation").value;
+ const strategies=[...document.querySelectorAll('input[name="strategy"]:checked')];
+ const note=$("reflectionText").value.trim();
+ const feedback=$("reflectionFeedback");
+ let message="";
+ if(confidence.value==="confident") message="Отлично! Ты чувствуешь себя уверенно. Попробуй объяснить одно из правил однокласснику.";
+ else if(confidence.value==="practice") message="Хорошая работа! Повтори правило на станции, которую выбрал(а), и реши ещё один похожий пример.";
+ else message="Спасибо за честный ответ. Это полезный шаг в обучении: выбери одну станцию и попроси учителя или ИИ дать подсказку без готового решения.";
+ if(station) message+=" Самой трудной ты отметил(а): "+station+".";
+ if(strategies.length) message+=" Ты использовал(а) "+strategies.length+" способ(а) работы: "+strategies.map(x=>({rules:"правила",hint:"подсказки",ai:"помощь ИИ",check:"самопроверку"}[x.value])).join(", ")+".";
+ if(note) message+=" Твой вывод: «"+note.replace(/[<>]/g,"")+"»";
+ feedback.className="feedback good";feedback.textContent=message;feedback.style.display="block";
+});
+render();
+</script>
+</body>
+</html>
